@@ -626,7 +626,6 @@ async function startCustomerScanner(video,status){
           const codes=await detector.detect(video);
           if(codes&&codes.length&&codes[0].rawValue){
             addScannedCustomerItem(codes[0].rawValue);
-            return;
           }
         }catch(e){}
         customerTimer=setTimeout(tick,180);
@@ -658,7 +657,8 @@ async function startCustomerZXing(video,status){
       if(!customerScannerOpen)return;
       if(result){
         addScannedCustomerItem(result.getText());
-        try{controls.stop();}catch(e){}
+        // Keep the camera/decoder running so the cashier can scan the next item.
+        // The DONE SCANNING button calls closeCustomerScanner() when finished.
       }
     });
   }catch(e){
